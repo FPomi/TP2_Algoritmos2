@@ -9,7 +9,7 @@ public class SistemaCNE {
     String[] _nombresPartidos;
     String[] _nombresDistritos; 
     
-    int[] _diputadosPorDistritos;
+    int[] _diputadosPorDistritos;   
     int[] _rangoMesasDistritos; // Tienen que estar ordenados (para que punto 5 sea de orden log (D))
 
     int[] _votosPresidenciales; // Mantener como variable a las dos mayores cantidades de votos
@@ -65,49 +65,23 @@ public class SistemaCNE {
         return _diputadosPorDistritos[idDistrito];
     }
 
-    public String distritoDeMesa(int idMesa) { //REVISAR, NO ANDAN LAS PRUEBAS
+    public String distritoDeMesa(int idMesa) { 
         
         int izq = 0;
-        int medio = 0;
-        int der = _nombresDistritos.length - 1;
-
-        if (der % 2 == 0){
-            medio = der / 2;
-        }else{
-            medio = (der + 1) / 2;
-        }
-
-        while(izq != medio || der != medio){
-            
-            if (_rangoMesasDistritos[medio - 1] < idMesa && _rangoMesasDistritos[medio + 1] > idMesa){
-            
-                izq = medio;
-                der = medio;
-            
-            }else if (_rangoMesasDistritos[medio - 1] < idMesa && _rangoMesasDistritos[medio + 1] < idMesa) {
-                
-                izq = medio;
-
-                if ((der - medio) % 2 == 0){
-                    medio = medio + (der - medio) / 2;
-                }else{
-                    medio = medio + (der - medio + 1) / 2;
-                }
-
+        int der = _rangoMesasDistritos.length - 1;
+        
+        if (idMesa >= _rangoMesasDistritos[der]) return _nombresDistritos[der];
+        
+        while (izq <= der){
+            int medio = (izq + der) / 2;
+    
+            if (idMesa < _rangoMesasDistritos[medio]){
+                der = medio - 1;
             } else {
-
-                der = medio;
-
-                if ((medio - izq) % 2 == 0){
-                    medio = (medio - izq) / 2;
-                }else{
-                    medio = (medio + 1 - izq) / 2;
-                }
-
+                izq = medio + 1;
             }
         }
-
-        return _nombresDistritos[medio];
+        return _nombresDistritos[der+1];
 
     }
 

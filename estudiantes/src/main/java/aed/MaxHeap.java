@@ -1,13 +1,14 @@
 package aed;
 
-import java.util.Arrays;
-
 public class MaxHeap {
 
     private DHondt[] heap;
     private int size;
+    private int proximo;
 
     public MaxHeap(int[] s) { // Array2Heap
+
+        this.proximo = 0;
 
         // conteo de votos
         int votosTotales = 0;
@@ -28,12 +29,13 @@ public class MaxHeap {
         // Agrego los nodos al heap (por ahora array comun desordenado)
         for (int i = 0; i < s.length - 1; i++) {
             if (s[i] > votosTotales*0.03) {
-                heap[i] = new DHondt(i, s[i]);
+                this.heap[this.proximo] = new DHondt(i, s[i]);
+                this.proximo++; 
             }
         }
 
         // Algoritmo de Floyd
-        for (int i = posPadre(size - 1); i >= 0; i--) {
+        for (int i = (this.proximo / 2) - 1; i >= 0; i--) {
             bajar(i);
         }
     }

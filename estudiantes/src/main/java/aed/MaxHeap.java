@@ -9,6 +9,33 @@ public class MaxHeap {
 
     public MaxHeap(int[] s) { // Array2Heap
 
+        // conteo de votos
+        int votosTotales = 0;
+        for (int i=0; i<s.length; i++)
+            votosTotales += s[i];
+
+        // conteo de distritos que superan el umbral
+        int cantidadDistritos = 0;
+        for (int i=0; i<s.length - 1; i++){
+            if (s[i] > votosTotales*0.03)
+                cantidadDistritos++;
+        }
+
+        // inicializo size y heap con los distritos que superan el umbral
+        this.size = cantidadDistritos;
+        this.heap = new DHondt[cantidadDistritos];
+
+        // Agrego los nodos al heap (por ahora array comun desordenado)
+        for (int i = 0; i < s.length - 1; i++) {
+            if (s[i] > votosTotales*0.03) {
+                heap[i] = new DHondt(i, s[i]);
+            }
+        }
+
+        // Algoritmo de Floyd
+        for (int i = posPadre(size - 1); i >= 0; i--) {
+            bajar(i);
+        }
     }
 
     public MaxHeap(int P) { // constructor
@@ -30,8 +57,7 @@ public class MaxHeap {
         }
     }
 
-    public void bajar() {
-        int indice = 0;
+    public void bajar(int indice) {
         while (!esHoja(indice)) {
             int indiceHijoIzquierdo = posHijoIzquierdo(indice);
             int indiceHijoDerecho = posHijoDerecho(indice);

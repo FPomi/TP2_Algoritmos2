@@ -1,4 +1,5 @@
 package aed;
+import aed.MaxHeap;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -18,6 +19,8 @@ public class SistemaCNE {
     int[] _votosPresidenciales; // Mantener como variable a las dos mayores cantidades de votos
     int[][] _votosDiputados;    // Heap aparte que lo ordene
     boolean[] _mesasRegistradas; // True = mesa se registro - False / Null = mesa no se registro
+
+    MaxHeap[] _resultadosPorDistritos; 
 
 
     public class VotosPartido{
@@ -55,6 +58,12 @@ public class SistemaCNE {
                 _votosDiputados [j][i] = 0;
             } 
         }
+
+        _resultadosPorDistritos = new MaxHeap[D];
+
+        for (int i = 0; i < D; i++) {
+            _resultadosPorDistritos[i] = new MaxHeap(P-1);
+        }
     }
 
     public String nombrePartido(int idPartido) {
@@ -70,10 +79,7 @@ public class SistemaCNE {
     }
 
     public int idDistritoDeMesa(int idMesa) {
-
-        // Falla en el test de complejidad por supuestamente no ser log D. Sin embargo,
-        // registrarMesa lo pasa O(P + log D) usando esta funcion ??
-
+        
         // Busqueda binaria en lista de D elementos. O(log D)
 
         int izq = 0;
@@ -99,8 +105,6 @@ public class SistemaCNE {
     }
 
     public void registrarMesa(int idMesa, VotosPartido[] actaMesa) {
-
-        // Pasa el test de complejidad
         
         int idDistrito = idDistritoDeMesa(idMesa); // O(log D)
 
@@ -109,6 +113,9 @@ public class SistemaCNE {
             _votosDiputados[idDistrito][i] += actaMesa[i].votosDiputados();
         }
 
+        int[] votosDistrito = this._votosDiputados[idDistrito].clone(); // O(P)
+
+        _resultadosPorDistritos[idDistrito] = new MaxHeap(votosDistrito); // O(P)
     }
 
     public int votosPresidenciales(int idPartido) {

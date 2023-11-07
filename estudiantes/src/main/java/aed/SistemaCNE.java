@@ -6,6 +6,9 @@ import java.util.Hashtable;
 public class SistemaCNE {
     // Completar atributos privados
 
+    int P;
+    int D;
+
     String[] _nombresPartidos;
     String[] _nombresDistritos; 
     
@@ -27,30 +30,31 @@ public class SistemaCNE {
 
     public SistemaCNE(String[] nombresDistritos, int[] diputadosPorDistrito, String[] nombresPartidos, int[] ultimasMesasDistritos) {
         
-        _nombresPartidos = new String[nombresPartidos.length];
-        _nombresDistritos = new String[nombresDistritos.length]; 
-    
-        _diputadosPorDistritos = new int[nombresDistritos.length];
-        _rangoMesasDistritos = new int[nombresDistritos.length]; 
+        P = nombresPartidos.length;
+        D = nombresDistritos.length;
 
-        _votosPresidenciales = new int[nombresPartidos.length];
-        _votosDiputados = new int[nombresDistritos.length][nombresPartidos.length];
+        _nombresPartidos = new String[P];
+        _nombresDistritos = new String[D]; 
+    
+        _diputadosPorDistritos = new int[D];
+        _rangoMesasDistritos = new int[D]; 
+
+        _votosPresidenciales = new int[P];
+        _votosDiputados = new int[D][P];
 
         _mesasRegistradas = new boolean[ultimasMesasDistritos[ultimasMesasDistritos.length - 1]]; 
 
-        for (int i = 0; i < nombresPartidos.length; i++ ){
+        for (int i = 0; i < P; i++ ){
             _nombresPartidos[i] = nombresPartidos[i];
             _votosPresidenciales[i] = 0; 
 
-            for (int j = 0; j < nombresDistritos.length; j++ ){
+            for (int j = 0; j < D; j++ ){
                 _nombresDistritos[j] = nombresDistritos[j];
                 _diputadosPorDistritos[j] = diputadosPorDistrito[j];
                 _rangoMesasDistritos[j] = ultimasMesasDistritos[j];
                 _votosDiputados [j][i] = 0;
             } 
-
         }
-        
     }
 
     public String nombrePartido(int idPartido) {
@@ -65,12 +69,17 @@ public class SistemaCNE {
         return _diputadosPorDistritos[idDistrito];
     }
 
-    public String distritoDeMesa(int idMesa) { 
-        
+    public int idDistritoDeMesa(int idMesa) {
+
+        // Falta ordenar _rangoMesasDistritos para ser O(log D)
+        // Falla en el test de complejidad
+
+        // Busqueda binaria en lista de D elementos. O(log D)
+
         int izq = 0;
-        int der = _rangoMesasDistritos.length - 1;
+        int der = D - 1;
         
-        if (idMesa >= _rangoMesasDistritos[der]) return _nombresDistritos[der];
+        if (idMesa >= _rangoMesasDistritos[der]) return der;
         
         while (izq <= der){
             int medio = (izq + der) / 2;
@@ -81,20 +90,33 @@ public class SistemaCNE {
                 izq = medio + 1;
             }
         }
-        return _nombresDistritos[der+1];
+        return der+1;
 
+    }
+
+    public String distritoDeMesa(int idMesa) { 
+        return _nombresDistritos[idDistritoDeMesa(idMesa)];
     }
 
     public void registrarMesa(int idMesa, VotosPartido[] actaMesa) {
-        throw new UnsupportedOperationException("No implementada aun");
+
+        // Pasa el test de complejidad
+        
+        int idDistrito = idDistritoDeMesa(idMesa); // O(log D)
+
+        for (int i=0; i < P; i++) { // O(P)
+            _votosPresidenciales[i] += actaMesa[i].votosPresidente();
+            _votosDiputados[idDistrito][i] += actaMesa[i].votosDiputados();
+        }
+
     }
 
     public int votosPresidenciales(int idPartido) {
-        throw new UnsupportedOperationException("No implementada aun");
+        return _votosPresidenciales[idPartido];
     }
 
     public int votosDiputados(int idPartido, int idDistrito) {
-        throw new UnsupportedOperationException("No implementada aun");
+        return _votosDiputados[idDistrito][idPartido];
     }
 
     public int[] resultadosDiputados(int idDistrito){

@@ -71,8 +71,8 @@ public class SistemaCNE {
 
     public int idDistritoDeMesa(int idMesa) {
 
-        // Falta ordenar _rangoMesasDistritos para ser O(log D)
-        // Falla en el test de complejidad
+        // Falla en el test de complejidad por supuestamente no ser log D. Sin embargo,
+        // registrarMesa lo pasa O(P + log D) usando esta funcion ??
 
         // Busqueda binaria en lista de D elementos. O(log D)
 

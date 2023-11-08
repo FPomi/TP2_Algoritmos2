@@ -13,7 +13,7 @@ public class SistemaCNE {
     String[] _nombresPartidos;
     String[] _nombresDistritos; 
     
-    int[] _diputadosPorDistritos;   
+    int[] _diputadosPorDistritos; 
     int[] _rangoMesasDistritos; // Tienen que estar ordenados (para que punto 5 sea de orden log (D))
 
     int[] _votosPresidenciales; // Mantener como variable a las dos mayores cantidades de votos
@@ -21,6 +21,7 @@ public class SistemaCNE {
     boolean[] _mesasRegistradas; // True = mesa se registro - False / Null = mesa no se registro
 
     MaxHeap[] _resultadosPorDistritos;
+    int[] _bancasPorPartido;
     int[] _ballotage; //Almacena los dos partidos que tienen mas votos para presidente
 
     public class VotosPartido{
@@ -64,6 +65,13 @@ public class SistemaCNE {
         for (int i = 0; i < D; i++) {
             _resultadosPorDistritos[i] = new MaxHeap(P-1);
         }
+
+        _bancasPorPartido = new int[P];
+
+        for(int partido = 0; partido < P; partido++){
+            _bancasPorPartido[partido] = 0;
+        }
+
     }
 
     public String nombrePartido(int idPartido) {
@@ -116,6 +124,7 @@ public class SistemaCNE {
         int[] votosDistrito = this._votosDiputados[idDistrito].clone(); // O(P)
 
         _resultadosPorDistritos[idDistrito] = new MaxHeap(votosDistrito); // O(P)
+    
     }
 
     public int votosPresidenciales(int idPartido) {
@@ -127,7 +136,26 @@ public class SistemaCNE {
     }
 
     public int[] resultadosDiputados(int idDistrito){
-        throw new UnsupportedOperationException("No implementada aun");
+
+        DHondt partidoMasVotos;
+
+
+        while (_diputadosPorDistritos[idDistrito] > 0){ // O(Dd * (log P + 1 + 1 + log P)) = O(Dd * (log P)) 
+            
+            partidoMasVotos = _resultadosPorDistritos[idDistrito].desencolarRaiz(); // O (log P)
+            
+            _bancasPorPartido[partidoMasVotos.idPartido] ++; 
+            partidoMasVotos.dividendo ++;
+            partidoMasVotos.cociente = partidoMasVotos.votos / partidoMasVotos.dividendo;
+            
+            _resultadosPorDistritos[idDistrito].encolar(partidoMasVotos); // O (log P)
+
+            _diputadosPorDistritos[idDistrito] --; //CONSULTAR TEMA DE IN / INOUT
+
+        }
+
+        return _bancasPorPartido;
+
     }
 
     public boolean hayBallotage(){

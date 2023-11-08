@@ -4,12 +4,13 @@ public class DHondt{
     public int idPartido;
     public int votos;
     public int cociente;
-    public int bancasAsignadas; 
+    public int dividendo;
 
     public DHondt(int idPartido, int votos){
         this.idPartido = idPartido;
         this.votos = votos;
         this.cociente = votos;
-        this.bancasAsignadas = 0;
+        this.dividendo = 1;
     }
+
 }

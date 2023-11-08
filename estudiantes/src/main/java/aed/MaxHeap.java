@@ -45,6 +45,18 @@ public class MaxHeap {
         size = 0;
     }
 
+    public DHondt desencolarRaiz (){
+
+        DHondt raizOriginal = heap[0];
+
+        intercambiar(0, size-1);
+        size --;
+        bajar(0);
+        
+        return raizOriginal;
+
+    }
+
     public void encolar(DHondt nodo) {
         heap[size] = nodo;
         size++;
@@ -60,6 +72,7 @@ public class MaxHeap {
     }
 
     public void bajar(int indice) {
+
         while (!esHoja(indice)) {
             int indiceHijoIzquierdo = posHijoIzquierdo(indice);
             int indiceHijoDerecho = posHijoDerecho(indice);
@@ -92,4 +105,5 @@ public class MaxHeap {
     public int posHijoDerecho(int indice) {return 2*indice + 2;}
 
     public int posHijoIzquierdo(int indice) {return 2*indice + 1;}
+
 }

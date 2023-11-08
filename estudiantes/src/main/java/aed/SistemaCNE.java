@@ -23,6 +23,7 @@ public class SistemaCNE {
     MaxHeap[] _resultadosPorDistritos;
     int[][] _bancasPorDistrito;
     int[] _ballotage; //Almacena los dos partidos que tienen mas votos para presidente
+    int _votosTotales;
 
     public class VotosPartido{
         private int presidente;
@@ -76,6 +77,9 @@ public class SistemaCNE {
 
         }
 
+        _ballotage = new int[]{0,1};
+        _votosTotales = 0;
+
     }
 
     public String nombrePartido(int idPartido) {
@@ -120,9 +124,31 @@ public class SistemaCNE {
         
         int idDistrito = idDistritoDeMesa(idMesa); // O(log D)
 
-        for (int i=0; i < P; i++) { // O(P)
-            _votosPresidenciales[i] += actaMesa[i].votosPresidente();
-            _votosDiputados[idDistrito][i] += actaMesa[i].votosDiputados();
+        for (int partido = 0; partido < P; partido++) { // O(P)
+
+            _votosTotales += actaMesa[partido].votosPresidente();
+            _votosPresidenciales[partido] += actaMesa[partido].votosPresidente();
+            _votosDiputados[idDistrito][partido] += actaMesa[partido].votosDiputados();
+        
+            if (_ballotage[0] != partido) { 
+                
+                if (_votosPresidenciales[partido] >= _votosPresidenciales[_ballotage[0]]){
+                
+                    _ballotage[1] = _ballotage[0];
+                    _ballotage[0] = partido;
+                
+                }else if (_votosPresidenciales[partido] >= _votosPresidenciales[_ballotage[1]]){
+                    _ballotage[1] = partido;
+                }
+
+            }  
+
+        }
+
+        if (_votosPresidenciales[_ballotage[1]] > _votosPresidenciales[_ballotage[0]]){
+            int aux = _ballotage [1];
+            _ballotage [1] = _ballotage[0];
+            _ballotage [0] = aux; 
         }
 
         int[] votosDistrito = this._votosDiputados[idDistrito].clone(); // O(P)
@@ -162,7 +188,21 @@ public class SistemaCNE {
     }
 
     public boolean hayBallotage(){
-        throw new UnsupportedOperationException("No implementada aun");
+
+        boolean hayBallotaje = true;
+        
+        float porcentajeMasVotado = (votosPresidenciales(_ballotage[0]) * 100) / _votosTotales;  
+        float porcentajeSegundoMasVotado = (votosPresidenciales(_ballotage[1]) * 100) / _votosTotales;
+
+        if (porcentajeMasVotado >= 45){
+            hayBallotaje = false;
+        }
+
+        if (porcentajeMasVotado >= 40 && (porcentajeMasVotado - porcentajeSegundoMasVotado > 10)){
+            hayBallotaje = false;
+        }
+
+        return hayBallotaje;
     }
 }
 

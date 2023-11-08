@@ -21,7 +21,7 @@ public class SistemaCNE {
     boolean[] _mesasRegistradas; // True = mesa se registro - False / Null = mesa no se registro
 
     MaxHeap[] _resultadosPorDistritos;
-    int[] _bancasPorPartido;
+    int[][] _bancasPorDistrito;
     int[] _ballotage; //Almacena los dos partidos que tienen mas votos para presidente
 
     public class VotosPartido{
@@ -48,15 +48,15 @@ public class SistemaCNE {
 
         _mesasRegistradas = new boolean[ultimasMesasDistritos[ultimasMesasDistritos.length - 1]]; 
 
-        for (int i = 0; i < P; i++ ){
-            _nombresPartidos[i] = nombresPartidos[i];
-            _votosPresidenciales[i] = 0; 
+        for (int partido = 0; partido < P; partido++ ){
+            _nombresPartidos[partido] = nombresPartidos[partido];
+            _votosPresidenciales[partido] = 0; 
 
-            for (int j = 0; j < D; j++ ){
-                _nombresDistritos[j] = nombresDistritos[j];
-                _diputadosPorDistritos[j] = diputadosPorDistrito[j];
-                _rangoMesasDistritos[j] = ultimasMesasDistritos[j];
-                _votosDiputados [j][i] = 0;
+            for (int distrito = 0; distrito < D; distrito++ ){
+                _nombresDistritos[distrito] = nombresDistritos[distrito];
+                _diputadosPorDistritos[distrito] = diputadosPorDistrito[distrito];
+                _rangoMesasDistritos[distrito] = ultimasMesasDistritos[distrito];
+                _votosDiputados [distrito][partido] = 0;
             } 
         }
 
@@ -66,10 +66,14 @@ public class SistemaCNE {
             _resultadosPorDistritos[i] = new MaxHeap(P-1);
         }
 
-        _bancasPorPartido = new int[P];
+        _bancasPorDistrito = new int [D][P];        
 
-        for(int partido = 0; partido < P; partido++){
-            _bancasPorPartido[partido] = 0;
+        for (int distrito = 0; distrito < D; distrito++ ){
+
+            for(int partido = 0; partido < P; partido++){
+                _bancasPorDistrito[distrito][partido] = 0;
+            }
+
         }
 
     }
@@ -139,12 +143,11 @@ public class SistemaCNE {
 
         DHondt partidoMasVotos;
 
-
         while (_diputadosPorDistritos[idDistrito] > 0){ // O(Dd * (log P + 1 + 1 + log P)) = O(Dd * (log P)) 
             
             partidoMasVotos = _resultadosPorDistritos[idDistrito].desencolarRaiz(); // O (log P)
             
-            _bancasPorPartido[partidoMasVotos.idPartido] ++; 
+            _bancasPorDistrito[idDistrito][partidoMasVotos.idPartido] ++; 
             partidoMasVotos.dividendo ++;
             partidoMasVotos.cociente = partidoMasVotos.votos / partidoMasVotos.dividendo;
             
@@ -154,7 +157,7 @@ public class SistemaCNE {
 
         }
 
-        return _bancasPorPartido;
+        return _bancasPorDistrito[idDistrito];
 
     }
 

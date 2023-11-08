@@ -20,8 +20,8 @@ public class SistemaCNE {
     int[][] _votosDiputados;    // Heap aparte que lo ordene
     boolean[] _mesasRegistradas; // True = mesa se registro - False / Null = mesa no se registro
 
-    MaxHeap[] _resultadosPorDistritos; 
-
+    MaxHeap[] _resultadosPorDistritos;
+    int[] _ballotage; //Almacena los dos partidos que tienen mas votos para presidente
 
     public class VotosPartido{
         private int presidente;

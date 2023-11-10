@@ -53,14 +53,13 @@ public class SistemaCNE {
 
         for (int partido = 0; partido < P; partido++ ){
             _nombresPartidos[partido] = nombresPartidos[partido];
-
-            for (int distrito = 0; distrito < D; distrito++ ){
-                _nombresDistritos[distrito] = nombresDistritos[distrito];
-                _diputadosPorDistritos[distrito] = diputadosPorDistrito[distrito];
-                _rangoMesasDistritos[distrito] = ultimasMesasDistritos[distrito];
-                
-            } 
         }
+
+        for (int distrito = 0; distrito < D; distrito++ ){
+            _nombresDistritos[distrito] = nombresDistritos[distrito];
+            _diputadosPorDistritos[distrito] = diputadosPorDistrito[distrito];
+            _rangoMesasDistritos[distrito] = ultimasMesasDistritos[distrito];
+        } 
 
         _diputadosPorDistritos_copia = _diputadosPorDistritos.clone();
         _resultadosPorDistritos = new MaxHeap[D];
